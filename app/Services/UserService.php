@@ -1,0 +1,103 @@
+<?php
+namespace App\Services;
+use App\Http\Requests\CreateUserRequest;
+use App\Mail\UserCreatedEmail;
+use App\Repositories\UserActivityRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
+use Okipa\LaravelBootstrapTableList\TableList;
+class UserService
+{
+    
+    private $userRepository;
+    
+    private $userActivityRepository;
+    
+    const ACTIVE = 1;
+    const IN_ACTIVE = 0;
+    
+    
+    public function __construct(UserRepository $userRepository, UserActivityRepository $userActivityRepository)
+    {
+        $this->userRepository = $userRepository;
+        $this->userActivityRepository = $userActivityRepository;
+    }
+    
+    public function createUser(CreateUserRequest $request)
+    {
+        $inputData = $request->all();
+        
+        unset($inputData['password_confirmation']);
+        $password = $inputData['password'];
+        $inputData['password'] = Hash::make($inputData['password']);
+        $user = $this->userRepository->create($inputData);
+        if (!$user) {
+            return null;
+        }
+        // Used this in the 'created' event of user observer (because of the password i wrote code here.).
+        Mail::to($inputData['email'])->send(new UserCreatedEmail(Auth::user(), $user, ['password' => $password]));
+        return $user;
+    }
+    
+    public function getAllUsers() : TableList
+    {
+        $table = $this->userRepository->getUsersList();
+        $table->addColumn('username')
+            ->setTitle('User Name')
+            ->isSortable()
+            ->isSearchable()
+            ->useForDestroyConfirmation();
+        $table->addColumn('first_name')
+            ->setTitle('First Name')
+            ->isSortable();
+        $table->addColumn('last_name')
+            ->setTitle('Last Name')
+            ->isSortable();
+        $table->addColumn('email')
+            ->setTitle('Email')
+            ->isSearchable()
+            ->isSortable();
+        $table->addColumn('created_at')
+            ->setTitle('Created At')
+            ->isSortable()
+            ->sortByDefault('desc')
+            ->setColumnDateTimeFormat('d-M-Y');
+        $table->addColumn('last_login_at')
+            ->setTitle('Last Login At')
+            ->isSortable()
+            ->setColumnDateTimeFormat('d-M-Y H:i');
+        return $table;
+    }
+    
+    public function getUser(string $id)
+    {
+        return $this->userRepository->find($id);
+    }
+   
+    public function deleteUser(string $id) : bool
+    {
+        if ($id == Auth::id()) {
+            return false;
+        }
+        return $this->userRepository->update($id, ['is_active' => self::IN_ACTIVE]);
+    }
+    
+    public function updateUser($request, string $userId) : bool
+    {
+        $inputData = $request->all();
+        if (isset($inputData['password']) && !empty($inputData['password'])) {
+            $inputData['password'] = Hash::make($inputData['password']);
+        } else {
+            unset($inputData['password']);
+        }
+        // Unset the password_confirmation field from the array.
+        unset($inputData['password_confirmation']);
+        if (!isset($inputData['is_active'])) {
+            $inputData['is_active'] = self::IN_ACTIVE;
+        }
+        return $this->userRepository->update($userId, $inputData);
+    }
+}

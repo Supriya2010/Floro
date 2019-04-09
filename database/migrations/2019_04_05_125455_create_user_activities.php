@@ -13,7 +13,7 @@ class CreateUserActivities extends Migration
      */
     public function up()
     {
-        Schema::create('user_activities_', function (Blueprint $table) {
+        Schema::create('user_activities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->string('old_value');
@@ -31,6 +31,6 @@ class CreateUserActivities extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_activities_');
+        Schema::dropIfExists('user_activities');
     }
 }
