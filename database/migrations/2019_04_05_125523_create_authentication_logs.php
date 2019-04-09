@@ -16,6 +16,7 @@ class CreateAuthenticationLogs extends Migration
         Schema::create('authentication_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('user_id');
+            //$table->string('browser_agent');
             $table->string('ip_address');
             $table->timestamps();
         });

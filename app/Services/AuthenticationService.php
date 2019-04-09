@@ -31,6 +31,7 @@ public function storeLoginActivityOfUser(Request $request, User $user)
 $logDetails = [
 'user_id' => $user->id,
 'ip_address' => $request->ip(),
+'browser-agent'=>$request->server('HTTP_USER_AGENT'),
 
 ];
 $this->authenticationLogRepository->create($logDetails);
