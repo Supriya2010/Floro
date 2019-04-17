@@ -11,8 +11,8 @@ return [
         'telephone_number',
     ],
 
-    'EMAIL_SENDER' => 'nishantsoni1228@gmail.com',
-    'EMAIL_SENDER_NAME' => 'Nishant Soni',
+    'EMAIL_SENDER' => 'supriyagadhave2010@gmail.com',
+    'EMAIL_SENDER_NAME' => 'Supriya Gadhave',
     'EMAIL_SUBJECT_WHEN_USER_CREATED' => 'Welcome to super-admin-panel!!',
 
     'DEVELOPMENT_URL' => 'http://localhost:8000',

@@ -28,6 +28,7 @@ class ExportUserController extends Controller
      */
     public function exportUsers()
     {
+        
         $this->exportUserService->processUserExport();
 
         return redirect('/users')->with('successMessage',

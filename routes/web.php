@@ -22,6 +22,8 @@ Route::get('/users', 'UserController@index')->name('users');
 
 Route::resource('users', 'UserController');
 
-Route::get('/export/users', 'ExportUserController@exportUsers')->name('usersExport');
+    Route::get('/export/users', 'ExportUserController@exportUsers')->name('usersExport');
     Route::get('/download/users', 'ExportUserController@showUsersDownload')->name('showUsersDownload');
     Route::get('/download/users-file', 'ExportUserController@downloadUsers')->name('usersDownload');
+
+    

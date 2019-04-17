@@ -28,6 +28,14 @@ class UserService
         $this->userRepository = $userRepository;
         $this->userActivityRepository = $userActivityRepository;
     }
+
+    public function index()
+    {
+        $users=$this->userRepository->index();
+        return $users;
+
+    }
+
     
     public function createUser(CreateUserRequest $request)
     {
@@ -141,4 +149,7 @@ class UserService
 
         return true;
     }
+
+            
+    
 }

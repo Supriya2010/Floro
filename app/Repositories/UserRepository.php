@@ -3,8 +3,11 @@ namespace App\Repositories;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Okipa\LaravelBootstrapTableList\TableList;
+use DB;
+
 class UserRepository extends Repository
 {
+    protected $users;
     /**
      * To initialize class objects/variables.
      *
@@ -28,6 +31,17 @@ class UserRepository extends Repository
      *
      * @return TableList
      */
+
+    public function index()
+    {
+
+        $users = DB::table('users')
+                    ->orderBy('username', 'desc')
+                     ->paginate(10);
+                     return $users;
+    }
+
+
     public function getUsersList() : TableList
     {
         return app(TableList::class)
